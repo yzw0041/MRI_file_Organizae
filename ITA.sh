@@ -37,7 +37,7 @@ cat "rest.txt" | wc -l
  find ./*/*FUNC_EPI_Resting*/NIFTI/ -type f >>rest.txt
 
 
- % count dimension and discard incomplete data
+ % count dimension and discard incomplete data; notice here 155 volumes ;
 
  cat "rest.txt" | while read C; do
         if  fslinfo $C | grep -q 155; then
@@ -53,12 +53,34 @@ echo $(cat "resting_incomplete_scans.txt"  | wc -l)
 
 % There is only 7 scans not complete; Transfer the data to organized folder;
 
-new_path='../Data/' % the upper level
-cat "resting_complete_scans.txt" | while read C; do
-       sub=`echo $C | cut -d'/' -f2`  # MRI folders
-       echo $sub
-       ff=`echo $C | rev |  cut -d'/' -f1 | rev`    # NIFTI files
-       echo $ff
+new_path='../Data/'  #the upper level
 
+cat "resting_complete_scans.txt" | while read C; do
+       sub=`echo $C | cut -d'/' -f2`  #MRI folders
+       echo $sub
+
+       ff=`echo $C | rev |  cut -d'/' -f1 | rev`    #NIFTI files
+       echo $ff
+       if [ -d "$sub" ]; then
+          echo "yes"
+          #mkdir $new_path/$sub
+          if [ -d "$new_path/$sub/func" ]; then
+              cp $C  $new_path/$sub/func/
+          else
+              mkdir -p $new_path/$sub/func  # -p can recursively make a new directory ;
+              cp $C  $new_path/$sub/func
+
+          fi
+          # count how many files inside this folder
+          count=`ls $new_path/$sub/func/rest*.nii.gz | wc -l`
+          echo $(( count++))
+          cp  $new_path/$sub/func/$ff  $new_path/$sub/func/rest$count.nii.gz
+          echo $new_path/$sub/func/rest$count.nii.gz >> $new_path/resting_functional_input.txt
+          rm $new_path/$sub/func/$ff
+
+
+       else
+           echo "no"
+       fi
 
 done
