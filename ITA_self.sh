@@ -3,12 +3,12 @@
 
 cd /Volumes/Pegasus_wangyun/ADHD/ITA/MRI/Raw
 
-find ./*/*Simon*/NIFTI/ -type f >> simon_update.txt #the new files
-file2=./simon_update.txt
+find ./*/*Self*/NIFTI/ -type f >> self_update.txt #the new files
+file2=./self_update.txt
 
-#find if simon.txt file already exist  ; this is the previous got
+#find if self.txt file already exist  ; this is the previous got
 
-file1=./simon.txt
+file1=./self.txt
 if [ -e "$file1" ]; then
     echo "File exists"
 else
@@ -21,7 +21,7 @@ if cmp -s "$file1" "$file2"
 then
    echo "The files match"
 else
-   echo "The previous simon.txt and the new simon_update.txt files are different"
+   echo "The previous self.txt and the new self_update.txt files are different"
    exit
 fi
 
@@ -30,32 +30,32 @@ fi
 
 
 
-# simoning State MRI
+# selfing State MRI
 
-#cat "simon.txt" | wc -l
+#cat "self.txt" | wc -l
 
- #find ./*/*simon_EPI_simoning*/NIFTI/ -type f >>simon.txt
+ #find ./*/*self_EPI_selfing*/NIFTI/ -type f >>self.txt
 
 
  # count dimension and discard incomplete data; notice here 155 volumes ;
 
- cat "simon.txt" | while read C; do
+ cat "self.txt" | while read C; do
         if  fslinfo $C | grep -q 155; then
-            echo $C >> simon_complete_scans.txt
+            echo $C >> self_complete_scans.txt
         else
-            echo $C >> simon_incomplete_scans.txt
+            echo $C >> self_incomplete_scans.txt
         fi
 
  done
 
-# echo $(cat "simoning_incomplete_scans.txt"  | wc -l)
+# echo $(cat "selfing_incomplete_scans.txt"  | wc -l)
 
 
 # There is only 7 scans not complete; Transfer the data to organized folder;
 
 new_path='../Data/'  #the upper level
 
-cat "simon.txt" | while read C; do
+cat "self.txt" | while read C; do
        sub=`echo $C | cut -d'/' -f2`  #MRI folders
        echo $sub
 
@@ -75,12 +75,12 @@ cat "simon.txt" | while read C; do
           tt=`echo $ff | cut -d'.' -f-1`
           #oldcount=${tt: -6:1}
           count=${tt: -7:2}
-          #count=`ls $new_path/$sub/simon/simon*.nii.gz | wc -l`
+          #count=`ls $new_path/$sub/self/self*.nii.gz | wc -l`
           #echo $(( count++))
-          cp  $new_path/$sub/func/$ff  $new_path/$sub/func/simon$count.nii.gz
-          echo $new_path/$sub/func/simon$count.nii.gz >> $new_path/simon_input.txt
+          cp  $new_path/$sub/func/$ff  $new_path/$sub/func/self$count.nii.gz
+          echo $new_path/$sub/func/self$count.nii.gz >> $new_path/self_input.txt
           rm $new_path/$sub/func/$ff
-          #rm $new_path/$sub/func/simon$oldcount.nii.gz
+          #rm $new_path/$sub/func/self$oldcount.nii.gz
 
 
        else
