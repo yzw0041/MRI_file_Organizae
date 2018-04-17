@@ -8,7 +8,7 @@ find ./*/*SIMON*/*.nii.gz -type f > ./Simon.txt #the new files
 
 new_path=/Volumes/Pegasus_wangyun/ADHD/ITA/MRI/Raw/Preprocess  #the upper level
 
-cat "rest.txt" | while read C; do
+cat "Simon.txt" | while read C; do
        sub=`echo $C | cut -d'/' -f2`  #MRI folders
        echo $sub
 
